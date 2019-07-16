@@ -46,7 +46,7 @@ void Server::handNewConn()
     {
         EventLoop *loop = eventLoopThreadPool_->getNextLoop();
         LOG << "New connection from " << inet_ntoa(client_addr.sin_addr) << ":" << ntohs(client_addr.sin_port);
-        // cout << "new connection" << endl;
+
         // cout << inet_ntoa(client_addr.sin_addr) << endl;
         // cout << ntohs(client_addr.sin_port) << endl;
         /*

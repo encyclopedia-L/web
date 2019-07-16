@@ -1,6 +1,3 @@
-#ifndef LOGSTREAM_H_INCLUDED
-#define LOGSTREAM_H_INCLUDED
-
 #pragma once
 #include "noncopyable.h"
 #include <assert.h>
@@ -113,7 +110,6 @@ public:
     void resetBuffer() { buffer_.reset(); }
 
 private:
-    void staticCheck();
 
     template<typename T>
     void formatInteger(T);
@@ -123,4 +119,3 @@ private:
     static const int kMaxNumericSize = 32;
 };
 
-#endif // LOGSTREAM_H_INCLUDED

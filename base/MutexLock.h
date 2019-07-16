@@ -1,28 +1,24 @@
-#ifndef MUTEXLOCK_H_INCLUDED
-#define MUTEXLOCK_H_INCLUDED
-
 #pragma once
+
 #include <pthread.h>
 #include "noncopyable.h"
 
 class MutexLock: public noncopyable
 {
 public:
+    friend class Condition;
     MutexLock()
     {
-        pthread_mutex_init(&mutex, NULL);
+        pthread_mutex_init(&mutex,nullptr);
     }
     ~MutexLock()
     {
-        pthread_mutex_lock(&mutex);
         pthread_mutex_destroy(&mutex);
     }
-    void lock()
-    {
+    void lock() {
         pthread_mutex_lock(&mutex);
     }
-    void unlock()
-    {
+    void unlock(){
         pthread_mutex_unlock(&mutex);
     }
     pthread_mutex_t* get()
@@ -31,18 +27,19 @@ public:
     }
 private:
     pthread_mutex_t mutex;
-
-private:
-    friend class Condition;
 };
 
 class MutexLockGuard: public noncopyable
 {
 public:
-    explicit MutexLockGuard(MutexLock& _mutex):mutex(_mutex) {mutex.lock();}
-    ~MutexLockGuard() {mutex.unlock();}
+    explicit MutexLockGuard(MutexLock &mutex_):mutex(mutex_)
+    {
+        mutex.lock();
+    }
+    ~MutexLockGuard()
+    {
+        mutex.unlock();
+    }
 private:
     MutexLock &mutex;
 };
-
-#endif // MUTEXLOCK_H_INCLUDED

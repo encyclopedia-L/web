@@ -1,45 +1,36 @@
 #include "LogFile.h"
-#include "FileUtil.h"
-#include <assert.h>
 #include <stdio.h>
-#include <time.h>
-#include <string>
 
 using namespace std;
 
-
-LogFile::LogFile(const string& basename, int flushEveryN)
-  : basename_(basename),
-    flushEveryN_(flushEveryN),
-    count_(0),
-    mutex_(new MutexLock)
+LogFile::LogFile(const string& basename_, int flushEveryN_ = 1024)
+:basename(basename_),flushEveryN(flushEveryN_),count(0),mutex(new MutexLock)
 {
-    //assert(basename.find('/') >= 0);
-    file_.reset(new AppendFile(basename));
+    file.reset(new AppendFile(basename));
 }
 
 LogFile::~LogFile()
-{ }
+{}
 
 void LogFile::append(const char* logline, int len)
 {
-    MutexLockGuard lock(*mutex_);
-    append_unlocked(logline, len);
+    MutexLockGuard lock(mutex);
+    append_unlocked(logline,len);
 }
 
 void LogFile::flush()
 {
-    MutexLockGuard lock(*mutex_);
-    file_->flush();
+    MutexLockGuard lock(mutex);
+    file->flush();
 }
 
 void LogFile::append_unlocked(const char* logline, int len)
 {
-    file_->append(logline, len);
-    ++count_;
-    if (count_ >= flushEveryN_)
+    file->append(logline,len);
+    ++count;
+    if(count >= flushEveryN)
     {
-        count_ = 0;
-        file_->flush();
+        count = 0;
+        file->flush();
     }
 }

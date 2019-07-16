@@ -1,6 +1,3 @@
-#ifndef CURRENTTHREAD_H_INCLUDED
-#define CURRENTTHREAD_H_INCLUDED
-
 #pragma once
 #include <stdint.h>
 
@@ -9,11 +6,11 @@ namespace CurrentThread
     extern __thread int t_cachedTid;
     extern __thread char t_tidString[32];
     extern __thread int t_tidStringLength;
-    extern __thread const char* t_threadName;
+    extern __thread const char *t_threadName;
     void cacheTid();
     inline int tid()
     {
-        if(__bulitin_expect(t_cachedTid == 0, 0))
+        if(__builtin_expect(t_cachedTid == 0, 0))
             cacheTid();
         return t_cachedTid;
     }
@@ -30,6 +27,3 @@ namespace CurrentThread
         return t_threadName;
     }
 }
-
-
-#endif // CURRENTTHREAD_H_INCLUDED

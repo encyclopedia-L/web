@@ -1,49 +1,48 @@
 #include "FileUtil.h"
 #include <assert.h>
+#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 using namespace std;
 
 AppendFile::AppendFile(string filename)
-:fp_(fopen(filename.c_str(), "ae"))
+:fp(fopen(filename.c_str(),"a"))
 {
-    setbuffer(fp_, buffer_, sizeof buffer_);
+    setbuffer(fp,buffer,sizeof(buffer));
 }
 
-AppendFile::~AppendFile()
+~AppendFile()
 {
-    fclose(fp_);
+    fclose(fp);
 }
 
 void AppendFile::append(const char *logline, const size_t len)
 {
-    size_t n = this->write(logline, len);
+    size_t n = this->write(logline,len);
     size_t remain = len - n;
-    while (remain > 0)
+    while(remain > 0)
     {
-        size_t x = this->write(logline + n, remain);
-        if (x == 0)
+        size_t t = this->write(logline+n,remain);
+        if(t == 0)
         {
-            int err = ferror(fp_);
-            if (err)
-                fprintf(stderr, "AppendFile::append() failed !\n");
+            int err = ferror(fp);
+            if(err)
+                printf(stderr,"AppendFile::append() failed !\n");
             break;
         }
-        n += x;
+        n += t;
         remain = len - n;
     }
 }
 
-void AppendFile::flush()
+size_t AppendFile::write(const char *logline, size_t len)
 {
-    fflush(fp_);
+    return fwrite_unlocked(logline,1,len,fp);
 }
 
-size_t AppendFile::write(const char* logline, size_t len)
+void AppendFile::flush()
 {
-    return fwrite_unlocked(logline, 1, len, fp_);
+    fflush(fp);
 }

@@ -1,13 +1,11 @@
-#ifndef THREAD_H_INCLUDED
-#define THREAD_H_INCLUDED
-
 #pragma once
+
 #include "noncopyable.h"
 #include "CountDownLatch.h"
 #include <pthread.h>
 #include <functional>
 
-class Thread: noncopyable
+class Thread: public noncopyable
 {
 public:
     typedef std::function<void()> ThreadFunc;
@@ -28,6 +26,3 @@ private:
     std::string name_;
     CountdownLatch latch_;
 };
-
-
-#endif // THREAD_H_INCLUDED

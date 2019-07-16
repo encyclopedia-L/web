@@ -1,23 +1,28 @@
-#ifndef COUNTDOWNLATCH_H_INCLUDED
-#define COUNTDOWNLATCH_H_INCLUDED
-
 #pragma once
+
+#include "Condition.h"
 #include "noncopyable.h"
 #include "MutexLock.h"
-#include "Condition.h"
 
-// CountDownLatch的主要作用是确保Thread中传进去的func真的启动了以后
-// 外层的start才返回
-class CountdownLatch: noncopyable
+class CountDownLatch : public noncopyable
 {
 public:
-    explicit CountdownLatch(int count);
-    void wait();
-    void countdown();
+    explicit CountDownLatch(int count_):mutex(),condition(mutex),count(count_) {}
+    void wait()
+    {
+        MutexLockGuard lock(mutex);
+        while(count > 0)
+            condition.wait();
+    }
+    void countDown()
+    {
+        MutexLockGuard lock(mutex);
+        --count;
+        if(count == 0)
+            condition.notifyAll();
+    }
 private:
-    mutable MutexLock mutex_;
-    Condition cond_;
-    int count_;
+    mutable MutexLock mutex;
+    Condition condition;
+    int count;
 };
-
-#endif // COUNTDOWNLATCH_H_INCLUDED

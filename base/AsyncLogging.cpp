@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <functional>
 
+using namespace std;
+
 AsyncLogging::AsyncLogging(string logFileName_,int flushInterval_)
 :flushInterval(flushInterval_),running(false),basename_(logFileName_),
 thread(std::bind(&AsyncLogging::threadFunc,this),"Logging"),

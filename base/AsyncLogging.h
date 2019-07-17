@@ -8,6 +8,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <memory>
 
 class AsyncLogging : public noncopyable
 {

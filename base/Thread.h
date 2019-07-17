@@ -24,5 +24,5 @@ private:
     pid_t tid_;
     ThreadFunc func_;
     std::string name_;
-    CountdownLatch latch_;
+    CountDownLatch latch_;
 };

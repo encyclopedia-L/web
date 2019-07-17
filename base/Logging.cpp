@@ -6,12 +6,13 @@
 #include <iostream>
 #include <time.h>
 #include <sys/time.h>
+#include <pthread.h>
 
 using namespace std;
 
 static pthread_once_t once_control_ = PTHREAD_ONCE_INIT;
 static AsyncLogging *AsyncLogger_;
-string Logger::logFileName = "/WebServer.log";
+string Logger::logFileName = "./WebServer.log";
 
 void once_init()
 {
@@ -21,8 +22,8 @@ void once_init()
 
 void output(const char* msg, int len)
 {
-    pthread_once(PTHREAD_ONCE_INIT,once_init);
-    AsyncLogger_.append(msg,len);
+    pthread_once(&once_control_,once_init);
+    AsyncLogger_->append(msg,len);
 }
 
 Logger::Impl::Impl(const char *fileName, int line_)
@@ -49,7 +50,7 @@ Logger::Logger(const char *fileName, int line)
 
 Logger::~Logger()
 {
-    impl.stream << " -- " << impl_.basename_ << ':' << impl_.line << '\n';
+    impl.stream << " -- " << impl.basename_ << ':' << impl.line << '\n';
     const LogStream::Buffer& buf(stream().buffer());
     output(buf.data(), buf.length());
 }

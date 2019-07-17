@@ -44,9 +44,9 @@ struct ThreadData
     ThreadFunc func_;
     string name_;
     pid_t* tid_;
-    CountdownLatch* latch_;
+    CountDownLatch* latch_;
 
-    ThreadData(const ThreadFunc& func, const string& name, pid_t *tid, CountdownLatch *latch)
+    ThreadData(const ThreadFunc& func, const string& name, pid_t *tid, CountDownLatch *latch)
     :func_(func), name_(name), tid_(tid), latch_(latch)
     {
 
@@ -55,7 +55,7 @@ struct ThreadData
     {
         *tid_ = CurrentThread::tid();
         tid_ = nullptr;
-        latch_->countdown();
+        latch_->countDown();
         latch_ = nullptr;
 
         CurrentThread::t_threadName = name_.empty() ? "Thread" : name_.c_str();

@@ -13,7 +13,7 @@ AppendFile::AppendFile(string filename)
     setbuffer(fp,buffer,sizeof(buffer));
 }
 
-~AppendFile()
+AppendFile::~AppendFile()
 {
     fclose(fp);
 }
@@ -29,7 +29,7 @@ void AppendFile::append(const char *logline, const size_t len)
         {
             int err = ferror(fp);
             if(err)
-                printf(stderr,"AppendFile::append() failed !\n");
+                fprintf(stderr,"AppendFile::append() failed !\n");
             break;
         }
         n += t;

@@ -19,6 +19,10 @@ public:
     {
         return logFileName;
     }
+    LogStream& stream()
+    {
+        return impl.stream;
+    }
 private:
     class Impl
     {

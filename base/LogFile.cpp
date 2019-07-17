@@ -3,7 +3,7 @@
 
 using namespace std;
 
-LogFile::LogFile(const string& basename_, int flushEveryN_ = 1024)
+LogFile::LogFile(const string& basename_, int flushEveryN_)
 :basename(basename_),flushEveryN(flushEveryN_),count(0),mutex(new MutexLock)
 {
     file.reset(new AppendFile(basename));
@@ -14,13 +14,13 @@ LogFile::~LogFile()
 
 void LogFile::append(const char* logline, int len)
 {
-    MutexLockGuard lock(mutex);
+    MutexLockGuard lock(*mutex);
     append_unlocked(logline,len);
 }
 
 void LogFile::flush()
 {
-    MutexLockGuard lock(mutex);
+    MutexLockGuard lock(*mutex);
     file->flush();
 }
 

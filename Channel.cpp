@@ -1,61 +1,54 @@
 #include "Channel.h"
-#include "Util.h"
-#include "Epoll.h"
 #include "EventLoop.h"
-#include <unistd.h>
-#include <queue>
-#include <cstdlib>
-#include <iostream>
-using namespace std;
+#include <sys/epoll.h>
 
-Channel::Channel(EventLoop *loop):
-    loop_(loop),
-    events_(0),
-    lastEvents_(0)
+Channel::Channel(EventLoop *loop_)
+:loop(loop_),events(0),lastEvents(0)
 { }
 
-Channel::Channel(EventLoop *loop, int fd):
-    loop_(loop),
-    fd_(fd),
-    events_(0),
-    lastEvents_(0)
+Channel::Channel(EventLoop *loop_,int fd_)
+:loop(loop_),fd(fd_),events(0),lastEvents(0)
 { }
 
 Channel::~Channel()
-{
-    //loop_->poller_->epoll_del(fd, events_);
-    //close(fd_);
-}
-
-int Channel::getFd()
-{
-    return fd_;
-}
-void Channel::setFd(int fd)
-{
-    fd_ = fd;
-}
+{ }
 
 void Channel::handleRead()
 {
-    if (readHandler_)
-    {
-        readHandler_();
-    }
+    if(readHandler)
+        readHandler();
 }
 
 void Channel::handleWrite()
 {
-    if (writeHandler_)
-    {
-        writeHandler_();
-    }
+    if(writeHandler)
+        writeHandler();
 }
 
 void Channel::handleConn()
 {
-    if (connHandler_)
+    if(connHandler)
+        connHandler();
+}
+
+void Channel::handleEvents()
+{
+    events = 0;
+    if((revents & EPOLLHUP) && !(revents & EPOLLIN))
     {
-        connHandler_();
+        events = 0;
+        return;
     }
+    if(revents & EPOLLERR)
+    {
+        if(errorHandler)
+            errorHandler();
+        events = 0;
+        return;
+    }
+    if(revents & (EPOLLIN | EPOLLPRI | EPOLLRDHUP))
+        handleRead();
+    if(revents & EPOLLOUT)
+        handleWrite();
+    handleConn();
 }

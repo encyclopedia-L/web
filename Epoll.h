@@ -1,14 +1,10 @@
-#ifndef EPOLL_H_INCLUDED
-#define EPOLL_H_INCLUDED
-
 #pragma once
 #include "Channel.h"
-#include "HttpData.h"
 #include "Timer.h"
+#include "HttpData.h"
 #include <vector>
-#include <unordered_map>
-#include <sys/epoll.h>
 #include <memory>
+#include <sys/epoll.h>
 
 class Epoll
 {
@@ -17,22 +13,20 @@ public:
     ~Epoll();
     void epoll_add(SP_Channel request, int timeout);
     void epoll_mod(SP_Channel request, int timeout);
-    void epoll_del(SP_Channel request);
-    std::vector<std::shared_ptr<Channel>> poll();
-    std::vector<std::shared_ptr<Channel>> getEventsRequest(int events_num);
+    void epoll_del(SP_Channel requestt);
+    std::vector<std::shared_ptr<Channel> > poll();
+    std::vector<std::shared_ptr<Channel> > getEventsRequest(int events_num);
     void add_timer(std::shared_ptr<Channel> request_data, int timeout);
-    int getEpollFd()
-    {
-        return epollFd_;
-    }
     void handleExpired();
+    int getEpollfd()
+    {
+        return epfd;
+    }
 private:
     static const int MAXFDS = 100000;
-    int epollFd_;
-    std::vector<epoll_event> events_;
-    std::shared_ptr<Channel> fd2chan_[MAXFDS];
-    std::shared_ptr<HttpData> fd2http_[MAXFDS];
-    TimerManager timerManager_;
+    int epfd;
+    std::vector<struct epoll_event> events;
+    std::shared_ptr<Channel> fd2chan[MAXFDS];
+    std::shared_ptr<HttpData> fd2http[MAXFDS];
+    TimerManager timerManager;
 };
-
-#endif // EPOLL_H_INCLUDED

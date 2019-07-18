@@ -1,6 +1,3 @@
-#ifndef UTIL_H_INCLUDED
-#define UTIL_H_INCLUDED
-
 #pragma once
 #include <cstdlib>
 #include <string>
@@ -16,5 +13,3 @@ void setSocketNodelay(int fd);
 void setSocketNoLinger(int fd);
 void shutDownWR(int fd);
 int socket_bind_listen(int port);
-
-#endif // UTIL_H_INCLUDED

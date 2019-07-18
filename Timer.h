@@ -1,33 +1,25 @@
-#ifndef TIMER_H_INCLUDED
-#define TIMER_H_INCLUDED
-
 #pragma once
+
 #include "HttpData.h"
-#include "base/noncopyable.h"
-#include "base/MutexLock.h"
-#include <unistd.h>
 #include <memory>
 #include <queue>
 #include <deque>
-
-class HttpData;
 
 class TimerNode
 {
 public:
     TimerNode(std::shared_ptr<HttpData> requestData, int timeout);
-    ~TimerNode();
     TimerNode(TimerNode &tn);
+    ~TimerNode();
     void update(int timeout);
     bool isValid();
     void clearReq();
-    void setDeleted() { deleted_ = true; }
-    bool isDeleted() const { return deleted_; }
-    size_t getExpTime() const { return expiredTime_; }
-
+    void setDeleted() { deleted = true;}
+    bool isDeleted() (return deleted;)
+    size_t getExpTime() {return expiredTime;}
 private:
-    bool deleted_;
-    size_t expiredTime_;
+    bool deleted;
+    size_t expiredTime;
     std::shared_ptr<HttpData> SPHttpData;
 };
 
@@ -46,11 +38,7 @@ public:
     ~TimerManager();
     void addTimer(std::shared_ptr<HttpData> SPHttpData, int timeout);
     void handleExpiredEvent();
-
 private:
     typedef std::shared_ptr<TimerNode> SPTimerNode;
-    std::priority_queue<SPTimerNode, std::deque<SPTimerNode>, TimerCmp> timerNodeQueue;
-    //MutexLock lock;
-};
-
-#endif // TIMER_H_INCLUDED
+    std::priority_queue<SPTimerNode,std::deque<SPTimerNode>,TimerCmp> timerNodeQueue;
+}

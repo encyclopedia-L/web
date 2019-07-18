@@ -1,22 +1,13 @@
-//
-
-#ifndef EVENTLOOP_H_INCLUDED
-#define EVENTLOOP_H_INCLUDED
-
 #pragma once
-#include "base/Thread.h"
-#include "Epoll.h"
-#include "base/Logging.h"
-#include "Channel.h"
+
 #include "base/CurrentThread.h"
-#include "Util.h"
-#include <vector>
+#include "Epoll.h"
+#include "Channel.h"
+#include "base/MutexLock.h"
+#include <assert.h>
 #include <memory>
+#include <vector>
 #include <functional>
-
-#include <iostream>
-using namespace std;
-
 
 class EventLoop
 {
@@ -28,46 +19,28 @@ public:
     void quit();
     void runInLoop(Functor&& cb);
     void queueInLoop(Functor&& cb);
-    bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
     void assertInLoopThread()
     {
         assert(isInLoopThread());
     }
-    void shutdown(shared_ptr<Channel> channel)
+    bool isInLoopThread() const
     {
-        shutDownWR(channel->getFd());
+        return threadId == CurrentThread::tid();
     }
-    void removeFromPoller(shared_ptr<Channel> channel)
-    {
-        //shutDownWR(channel->getFd());
-        poller_->epoll_del(channel);
-    }
-    void updatePoller(shared_ptr<Channel> channel, int timeout = 0)
-    {
-        poller_->epoll_mod(channel, timeout);
-    }
-    void addToPoller(shared_ptr<Channel> channel, int timeout = 0)
-    {
-        poller_->epoll_add(channel, timeout);
-    }
-
 private:
-    // 声明顺序 wakeupFd_ > pwakeupChannel_
-    bool looping_;
-    shared_ptr<Epoll> poller_;
-    int wakeupFd_;
-    bool quit_;
-    bool eventHandling_;
-    mutable MutexLock mutex_;
-    std::vector<Functor> pendingFunctors_;
-    bool callingPendingFunctors_;
-    const pid_t threadId_;
-    shared_ptr<Channel> pwakeupChannel_;
-
     void wakeup();
     void handleRead();
-    void doPendingFunctors();
     void handleConn();
-};
+    void doPendingFunctors();
 
-#endif // EVENTLOOP_H_INCLUDED
+    bool looping;
+    int wakeupfd;
+    bool quit_;
+    bool eventHandling;
+    mutable MutexLock mutex;
+    bool callingPendingFunctors;
+    std::vector<Functor> pendingFunctors;
+    std::shared_ptr<Epoll> poller;
+    std::shared_ptr<Channel> pwakeupChannel;
+    const pid_t threadId;
+};

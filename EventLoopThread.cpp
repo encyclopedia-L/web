@@ -1,49 +1,42 @@
 #include "EventLoopThread.h"
-#include <functional>
-
+#include <assert.h>
 
 EventLoopThread::EventLoopThread()
-:   loop_(NULL),
-    exiting_(false),
-    thread_(bind(&EventLoopThread::threadFunc, this), "EventLoopThread"),
-    mutex_(),
-    cond_(mutex_)
+:loop(nullptr),exiting(false),
+thread(bind(&EventLoopThread::threadFunc, this), "EventLoopThread"),
+mutex(),cond(mutex)
 { }
 
 EventLoopThread::~EventLoopThread()
 {
-    exiting_ = true;
-    if (loop_ != NULL)
+    exiting = true;
+    if(loop != nullptr)
     {
-        loop_->quit();
-        thread_.join();
+        loop->quit();
+        thread.join();
     }
 }
 
 EventLoop* EventLoopThread::startLoop()
 {
-    assert(!thread_.started());
-    thread_.start();
+    assert(!thread.started());
+    thread.start();
     {
-        MutexLockGuard lock(mutex_);
-        // 一直等到threadFun在Thread里真正跑起来
-        while (loop_ == NULL)
-            cond_.wait();
+        MutexLockGuard lock(mutex);
+        while(loop == nullptr)
+            cond.wait();
     }
-    return loop_;
+    return loop;
 }
 
 void EventLoopThread::threadFunc()
 {
-    EventLoop loop;
-
+    EventLoop loop_;
     {
-        MutexLockGuard lock(mutex_);
-        loop_ = &loop;
-        cond_.notify();
+        MutexLockGuard lock(mutex);
+        loop = &loop_;
+        cond.notify();
     }
-
-    loop.loop();
-    //assert(exiting_);
-    loop_ = NULL;
+    loop_.loop();
+    loop = nullptr;
 }

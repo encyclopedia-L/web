@@ -1,12 +1,9 @@
 #include "EventLoopThreadPool.h"
 
-EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseLoop, int numThreads)
-:   baseLoop_(baseLoop),
-    started_(false),
-    numThreads_(numThreads),
-    next_(0)
+EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseLoop_, int numThreads_)
+:baseLoop(baseLoop_),started(false),numThreads(numThreads_),next(0)
 {
-    if (numThreads_ <= 0)
+    if(numThreads <= 0)
     {
         LOG << "numThreads_ <= 0";
         abort();
@@ -15,25 +12,25 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseLoop, int numThreads)
 
 void EventLoopThreadPool::start()
 {
-    baseLoop_->assertInLoopThread();
-    started_ = true;
-    for (int i = 0; i < numThreads_; ++i)
+    baseLoop->assertInLoopThread();
+    started = true;
+    for(int i = 0; i < numThreads; ++i)
     {
         std::shared_ptr<EventLoopThread> t(new EventLoopThread());
-        threads_.push_back(t);
-        loops_.push_back(t->startLoop());
+        threads.push_back(t);
+        loops.push_back(t->startLoop());
     }
 }
 
-EventLoop *EventLoopThreadPool::getNextLoop()
+EventLoop* EventLoopThreadPool::getNextLoop()
 {
-    baseLoop_->assertInLoopThread();
-    assert(started_);
-    EventLoop *loop = baseLoop_;
-    if (!loops_.empty())
+    baseLoop->assertInLoopThread();
+    assert(started);
+    EventLoop *loop = baseLoop;
+    if(!loops.empty())
     {
-        loop = loops_[next_];
-        next_ = (next_ + 1) % numThreads_;
+        loop = loops[next];
+        next = (next + 1) % numThreads;
     }
     return loop;
 }

@@ -1,32 +1,25 @@
-#ifndef SERVER_H_INCLUDED
-#define SERVER_H_INCLUDED
-
 #pragma once
 #include "EventLoop.h"
 #include "Channel.h"
 #include "EventLoopThreadPool.h"
 #include <memory>
 
-
 class Server
 {
 public:
-    Server(EventLoop *loop, int threadNum, int port);
+    Server(EventLoop *loop_, int threadNum_, int port)_;
     ~Server() { }
-    EventLoop* getLoop() const { return loop_; }
+    EventLoop* getLoop() const { return loop; }
     void start();
     void handNewConn();
-    void handThisConn() { loop_->updatePoller(acceptChannel_); }
-
+    void handThisConn() { loop->updatePoller(acceptChannel); }
 private:
-    EventLoop *loop_;
-    int threadNum_;
-    std::unique_ptr<EventLoopThreadPool> eventLoopThreadPool_;
-    bool started_;
-    std::shared_ptr<Channel> acceptChannel_;
-    int port_;
-    int listenFd_;
+    EventLoop *loop;
+    int threadNum_-;
+    std::unique_ptr<EventLoopThreadPool> eventLoopThreadPool;
+    bool started;
+    std::shared_ptr<Channel> acceptChannel;
+    int port;
+    int listenFd;
     static const int MAXFDS = 100000;
 };
-
-#endif // SERVER_H_INCLUDED

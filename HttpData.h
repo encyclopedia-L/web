@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <unistd.h>
 
 class EventLoop;
 class TimerNode;
@@ -16,27 +17,27 @@ enum ProcessState
     STATE_RECV_BODY,
     STATE_ANALYSIS,
     STATE_FINISH
-}
+};
 
 enum URIState
 {
     PARSE_URI_AGAIN = 1,
     PARSE_URI_ERROR,
     PARSE_URI_SUCCESS,
-}
+};
 
 enum HeaderState
 {
     PARSE_HEADER_SUCCESS = 1,
     PARSE_HEADER_AGAIN,
     PARSE_HEADER_ERROR
-}
+};
 
 enum AnalysisState
 {
     ANALYSIS_SUCCESS = 1,
     ANALYSIS_ERROR
-}
+};
 
 enum ParseState
 {
@@ -49,7 +50,7 @@ enum ParseState
     H_LF,
     H_END_CR,
     H_END_LF
-}
+};
 
 enum ConnectionState
 {
@@ -86,7 +87,7 @@ class HttpData : public std::enable_shared_from_this<HttpData>
 {
 public:
     HttpData(EventLoop *loop,int connfd);
-    ~HttpData();
+    ~HttpData() { close(fd_);}
     void reset();
     void seperateTimer();
     void linkTimer(std::shared_ptr<TimerNode> mtimer)

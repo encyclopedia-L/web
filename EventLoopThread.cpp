@@ -3,7 +3,7 @@
 
 EventLoopThread::EventLoopThread()
 :loop(nullptr),exiting(false),
-thread(bind(&EventLoopThread::threadFunc, this), "EventLoopThread"),
+thread(std::bind(&EventLoopThread::threadFunc, this), "EventLoopThread"),
 mutex(),cond(mutex)
 { }
 

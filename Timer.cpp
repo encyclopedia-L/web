@@ -21,18 +21,18 @@ TimerNode::~TimerNode()
         SPHttpData->handleClose();
 }
 
-TimerNode::update(int timeout)
+void TimerNode::update(int timeout)
 {
     struct timeval now;
     gettimeofday(&now,nullptr);
     expiredTime = (((now.tv_sec % 10000) * 1000) + (now.tv_usec / 1000)) + timeout;
 }
 
-TimerNode::isValid()
+bool TimerNode::isValid()
 {
     struct timeval now;
     gettimeofday(&now,nullptr);
-    size_t tmp = (((now.tv_sec % 10000) * 1000) + (now.tv_usec / 1000)) + timeout;
+    size_t tmp = (((now.tv_sec % 10000) * 1000) + (now.tv_usec / 1000));
     if(tmp < expiredTime)
         return true;
     else

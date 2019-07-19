@@ -15,7 +15,7 @@ public:
     bool isValid();
     void clearReq();
     void setDeleted() { deleted = true;}
-    bool isDeleted() (return deleted;)
+    bool isDeleted() {return deleted;}
     size_t getExpTime() {return expiredTime;}
 private:
     bool deleted;
@@ -41,4 +41,4 @@ public:
 private:
     typedef std::shared_ptr<TimerNode> SPTimerNode;
     std::priority_queue<SPTimerNode,std::deque<SPTimerNode>,TimerCmp> timerNodeQueue;
-}
+};

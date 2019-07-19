@@ -111,7 +111,7 @@ void Epoll::add_timer(SP_Channel request_data, int timeout)
         LOG << "timer add fail";
 }
 
-void Epoll::handleExpired()]
+void Epoll::handleExpired()
 {
-    TimerManager.handleExpiredEvent();
+    timerManager.handleExpiredEvent();
 }

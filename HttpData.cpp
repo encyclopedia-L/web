@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <stdio.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -57,7 +57,7 @@ state_(STATE_PARSE_URI),hState_(H_START),nowReadPos_(0),keepAlive_(false)
 
 void HttpData::handleRead()
 {
-    __uint32_t &events_ = channel_->getEvents();
+    __uint32_t events_ = channel_->getEvents();
     do
     {
         bool zero = false;
@@ -180,7 +180,7 @@ void HttpData::handleWrite()
 {
     if (!error_ && connectionState_ != H_DISCONNECTED)
     {
-        __uint32_t &events_ = channel_->getEvents();
+        __uint32_t events_ = channel_->getEvents();
         if (writen(fd_, outBuffer_) < 0)
         {
             perror("writen");
@@ -195,7 +195,7 @@ void HttpData::handleWrite()
 void HttpData::handleConn()
 {
     seperateTimer();
-    __uint32_t &events_ = channel_->getEvents();
+    __uint32_t events_ = channel_->getEvents();
     if (!error_ && connectionState_ == H_CONNECTED)
     {
         if (events_ != 0)
@@ -473,17 +473,6 @@ AnalysisState HttpData::analysisRequest()
         if (fileName_ == "hello")
         {
             outBuffer_ = "HTTP/1.1 200 OK\r\nContent-type: text/plain\r\n\r\nHello World";
-            return ANALYSIS_SUCCESS;
-        }
-        if (fileName_ == "favicon.ico")
-        {
-            header += "Content-Type: image/png\r\n";
-            header += "Content-Length: " + to_string(sizeof favicon) + "\r\n";
-            header += "Server: LinYa's Web Server\r\n";
-
-            header += "\r\n";
-            outBuffer_ += header;
-            outBuffer_ += string(favicon, favicon + sizeof favicon);;
             return ANALYSIS_SUCCESS;
         }
 

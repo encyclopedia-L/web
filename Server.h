@@ -7,7 +7,7 @@
 class Server
 {
 public:
-    Server(EventLoop *loop_, int threadNum_, int port)_;
+    Server(EventLoop *loop_, int threadNum_, int port_);
     ~Server() { }
     EventLoop* getLoop() const { return loop; }
     void start();
@@ -15,7 +15,7 @@ public:
     void handThisConn() { loop->updatePoller(acceptChannel); }
 private:
     EventLoop *loop;
-    int threadNum_-;
+    int threadNum;
     std::unique_ptr<EventLoopThreadPool> eventLoopThreadPool;
     bool started;
     std::shared_ptr<Channel> acceptChannel;

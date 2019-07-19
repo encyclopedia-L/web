@@ -43,7 +43,7 @@ ssize_t readn(int fd, std::string &inBuffer, bool &zero)
     while(true)
     {
         char buff[MAX_BUFF];
-        if((nread = read(fd,vuff,MAX_BUFF)) < 0)
+        if((nread = read(fd,buff,MAX_BUFF)) < 0)
         {
             if(errno == EINTR)
                 continue;
@@ -70,7 +70,7 @@ ssize_t readn(int fd,std::string &inBuffer)
     while(true)
     {
         char buff[MAX_BUFF];
-        if((nread = read(fd,vuff,MAX_BUFF)) < 0)
+        if((nread = read(fd,buff,MAX_BUFF)) < 0)
         {
             if(errno == EINTR)
                 continue;

@@ -4,6 +4,7 @@
 #include "Util.h"
 #include <sys/eventfd.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <functional>
 
 using namespace std;
@@ -26,7 +27,8 @@ EventLoop::EventLoop()
 callingPendingFunctors(false),poller(new Epoll()),pwakeupChannel(new Channel(this,wakeupfd)),threadId(CurrentThread::tid())
 {
     if(t_loopInThisThread)
-        LOG << "Another EventLoop " << t_loopInThisThread << " exists in this thread " << threadId_;
+        {//LOG << "Another EventLoop " << t_loopInThisThread << " exists in this thread " << threadId;
+	}
     else
         t_loopInThisThread = this;
     pwakeupChannel->setEvents(EPOLLIN | EPOLLET);
@@ -59,7 +61,7 @@ void EventLoop::handleRead()
     {
         LOG << "EventLoop::handleRead() reads " << n << " bytes instead of 8";
     }
-    pwakeupChannel_->setEvents(EPOLLIN | EPOLLET);
+    pwakeupChannel->setEvents(EPOLLIN | EPOLLET);
 }
 
 void EventLoop::handleConn()

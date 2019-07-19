@@ -4,6 +4,7 @@
 #include "Epoll.h"
 #include "Channel.h"
 #include "base/MutexLock.h"
+#include "Util.h"
 #include <assert.h>
 #include <memory>
 #include <vector>
@@ -26,6 +27,22 @@ public:
     bool isInLoopThread() const
     {
         return threadId == CurrentThread::tid();
+    }
+    void shutdown(std::shared_ptr<Channel> channel)
+    {
+        shutDownWR(channel->getFd());
+    }
+    void removeFromPoller(std::shared_ptr<Channel> channel)
+    {
+        poller->epoll_del(channel);
+    }
+    void updatePoller(std::shared_ptr<Channel> channel, int timeout = 0)
+    {
+        poller->epoll_mod(channel, timeout);
+    }
+    void addToPoller(std::shared_ptr<Channel> channel, int timeout = 0)
+    {
+        poller->epoll_add(channel, timeout);
     }
 private:
     void wakeup();
